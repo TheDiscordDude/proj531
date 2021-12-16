@@ -1,3 +1,5 @@
+import random
+
 import chess
 
 class COLORS:
@@ -18,5 +20,10 @@ def showBoard(board):
             nstr+=COLORS.WHITE + i + COLORS.ENDC
     
     print(nstr)
-
+#print(board.legal_moves)
+move = chess.Move(chess.A2, chess.A3)
+board.push(move)
+print(board.turn)
 showBoard(board)
+
+
