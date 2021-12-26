@@ -1,11 +1,27 @@
 import random
-from display import *
+from sys import platform
+
 import chess
-board = chess.Board()
+from display import *
+from chess import *
+
+
+
+board = Board()
 #print(board.legal_moves)
-Nf3 = chess.Move.from_uci("a2a4")
-Nf4 = chess.Move.from_uci("a7a6")
-display_board(board)
+
+playing = True
+while playing:
+    display_board(board)
+    print("Bonjour Joueur 1 !")
+    piece = ""
+    while not(re.fullmatch(r'[a-h][1-8]', piece)):
+        piece = input("Donnez les coordonnees de la piece que vous souhaitez bouger ( par exemple: a5): ")    
+    display_board(board, (ord(piece[0])-97)+(int(piece[1:])-1)*8)
+
+Nf3 = Move.from_uci("a2a4")
+Nf4 = Move.from_uci("a7a6")
+display_board(board, "a2")
 
 #move = chess.Move(chess.A3, chess.A3)
 #board.push(move)
