@@ -1,13 +1,23 @@
 import enum
-from utils import getPiece
+from utils import *
 
 class COLORS:
     WHITE = '\033[96m'
     BLACK = '\033[94m'
-    LEGAL_PLACES = '\33[91m'
+    LEGAL_PLACES = '\033[1;32m' 
+    CHOSEN_PIECE = '\033[1;33m'
     ENDC = '\033[0m'
 
-def display_board(board, chosen_piece=None):
+def clearConsole():
+    print('\033[H\033[J', end='')
+
+def display_board(board: Board, chosen_piece:int=None):
+    """
+    Displays the board
+    :param board: the current chess Board used
+    :param chosen_piece: all teh possible moves for this piece will be displayed
+    :returns: nothing
+    """
     str_board = [[] for i in range(9)]
     legal_places = []
     positionY = 7
@@ -34,6 +44,10 @@ def display_board(board, chosen_piece=None):
             nbLigne+=1
             positionX=0
             positionY-=1
+        
+        elif positionX+positionY*8 == chosen_piece:
+            str_board[nbLigne].append(COLORS.CHOSEN_PIECE + caractere + COLORS.ENDC)
+            positionX+=1
 
         elif caractere.islower():
             if positionX+positionY*8 in legal_places:
@@ -48,7 +62,6 @@ def display_board(board, chosen_piece=None):
             else : 
                 str_board[nbLigne].append(COLORS.WHITE + caractere + COLORS.ENDC)
             positionX+=1
-
     for i in range(0,8):
         str_board[i].insert(0, str(8-i) + " ")
 
