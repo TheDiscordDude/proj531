@@ -15,19 +15,16 @@ def display_board(board: Board, chosen_piece:int=None):
     """
     Displays the board
     :param board: the current chess Board used
-    :param chosen_piece: all teh possible moves for this piece will be displayed
+    :param chosen_piece: all the possible moves for this piece will be displayed
     :returns: nothing
     """
     str_board = [[] for i in range(9)]
-    legal_places = []
+    legal_places = SquareSet()
     positionY = 7
     positionX = 0
     nbLigne = 0
     if chosen_piece :
-        for i in board.legal_moves:
-            if i.from_square == chosen_piece:
-                piece = str(i)[2:]
-                legal_places.append(getPiece(piece))
+        legal_places = getLegalPlaces(chosen_piece, board)
 
     for caractere in str(board):
         if caractere == ".":

@@ -1,4 +1,4 @@
-from chess import Board, Move
+from chess import Board, Move, SquareSet
 
 def getPiece(coords:str) -> int:
     """
@@ -7,6 +7,14 @@ def getPiece(coords:str) -> int:
     :returns: an integer representing the piece
     """
     return (ord(coords[0])-97)+(int(coords[1:])-1)*8
+
+def getLegalPlaces(piece, board):
+    legal_places = SquareSet()
+    for i in board.legal_moves:
+        if i.from_square == piece:
+            p = str(i)[2:]
+            legal_places.add(getPiece(p))
+    return legal_places
 
 def checkPiece(board:Board, coords:str) -> bool:
     """
@@ -29,6 +37,4 @@ def checkMove(board:Board, from_:str, to_:str) -> bool:
     :param to_: the ending square where the piece will be
     :returns: a boolean : True if the move is possible, False if not
     """
-    if Move.from_uci(from_+to_) in board.legal_moves:
-        return True
-    return False
+    return board.is_legal(Move.from_uci(from_+to_))

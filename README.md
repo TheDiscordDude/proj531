@@ -1,15 +1,26 @@
 # Polychess
+## Objectif :
+Créer un jeux d'échec fonctionnement en console et graphique.
 
-## Objectives :
+## Librairies requises : 
+Ce jeux requière Python 3.7 ou au dessus.
 
-Create a Being able to play chess in your command prompt
+Vous pouvez télécharger toutes les dépendance avec cette commande : 
 
-## Requirements : 
+`pip install -r Requirements.txt`
 
-This game requires Python 3.7 or higher
+## Comment jouer : 
 
-- Python-chess
-You can install python-chess with the command : 
-`pip install chess`
+## Développement du projet : 
 
-## How to play : 
+### Séance 1 (16/12/2021)
+
+Prise en main de python chess
+
+### Séance 2 (04/01/2022)
+
+- Boucle principale du jeu
+- Partie mode console (Joueur² contre Joueur)
+- Gestion des échecs lors d’une partie pour le mode console
+- Déplacement/contrainte des pièces.
+- Affichage du plateau de jeu en mode graphique
