@@ -1,5 +1,5 @@
 import enum
-from utils import *
+from movements import *
 
 class COLORS:
     WHITE = '\033[96m'

@@ -2,90 +2,455 @@
 
 import pygame.transform
 from display import *
-#from attack import *
+from displayUI import *
+import pygame
+
+import time
+
+import sys
+
 from pygame import *
 from consts import *
 import chess.svg
-import pygame
-from pygame.locals import QUIT,MOUSEBUTTONDOWN,MOUSEBUTTONUP
+
+board = Board()
+
 #import copy
-#import pickle 
+#import pickle
 #from collections import defaultdict 
 #from collections import Counter 
 #import threading 
-
-def main():
+from AI.ai import play_ai
+def main(board:Board):
     #board = Board('1nb1kbn1/1pPPppp1/7r/p6p/8/8/PPP2PPP/RNBQKBNR b KQ - 0 8')
-    board = Board()
+    #board = Board("3rr1k1/pp3p2/1q2p2p/3pPbb1/2pP1p2/P1P2B1P/1P1NQPP1/3RR1K1 w - - 5 28")
+
     
     print(" Voulez-vous jouer en mode graphique ou console ?  ")
     print("1: Mode graphique")
     print("2: Mode console")
     
-    choix=input("Votre choix ?")
+    choix=""
     while not(re.fullmatch(r'[1-2]', choix)):
-        choix=input("Votre choix ?")
+        choix=input("Votre choix ? ")
     choix = int(choix)
+
+
+    print("\nVoulez-vous jouer contre une IA ou contre un joueur ? \n"\
+        "1: Contre un Joueur \n"\
+        "2: Contre une IA \n")
+    opponentChoice = ""
+    while not(re.fullmatch(r'[1-2]', opponentChoice)):
+        opponentChoice = input("Votre choix ? ")
+    opponentChoice = int(opponentChoice)
+
     if choix==1:
         graphicalGame(board)
     else:
-        consoleGame(board)
+        consoleGame(board, opponentChoice)
 
 def graphicalGame(board:Board):
-    pygame.init()
-    #Load the screen with any arbitrary size for now:
-    screen = pygame.display.set_mode((640,640))
+    ## Basically, check black and white pawns separately and checks the square above them. If its free that space gets an "x" and if it is occupied by a piece of the opposite team then that piece becomes killable.
+    def pawn_moves_b(index):
+        if index[0] == 1:
+            if board[index[0] + 2][index[1]] == '  ' and board[index[0] + 1][index[1]] == '  ':
+                board[index[0] + 2][index[1]] = 'x '
+        bottom3 = [[index[0] + 1, index[1] + i] for i in range(-1, 2)]
 
-    running = True
-    background = pygame.image.load('images/board.png').convert()
-    size_of_bg = background.get_rect().size
-    pieces_image = pygame.image.load('images/Chess_Pieces_Sprite.png').convert_alpha()
+        for positions in bottom3:
+            if on_board(positions):
+                if bottom3.index(positions) % 2 == 0:
+                    try:
+                        if board[positions[0]][positions[1]].team != 'b':
+                            board[positions[0]][positions[1]].killable = True
+                    except:
+                        pass
+                else:
+                    if board[positions[0]][positions[1]] == '  ':
+                        board[positions[0]][positions[1]] = 'x '
+        return board
     
-    #Get size of the individual squares
-    square_width = size_of_bg[0]/8
-    square_height = size_of_bg[1]/8
-    pieces_image = pygame.transform.scale(pieces_image,(int(square_width*6),int(square_height*2)))
+    def check_team(moves, index):
+        row, col = index
+        if moves%2 == 0:
+            if board[row][col].team == 'w':
+                return True
+        else:
+            if board[row][col].team == 'b':
+                return True
+
+    def pawn_moves_w(index):
+        if index[0] == 6:
+            if board[index[0] - 2][index[1]] == '  ' and board[index[0] - 1][index[1]] == '  ':
+                board[index[0] - 2][index[1]] = 'x '
+        top3 = [[index[0] - 1, index[1] + i] for i in range(-1, 2)]
+
+        for positions in top3:
+            if on_board(positions):
+                if top3.index(positions) % 2 == 0:
+                    try:
+                        if board[positions[0]][positions[1]].team != 'w':
+                            board[positions[0]][positions[1]].killable = True
+                    except:
+                        pass
+                else:
+                    if board[positions[0]][positions[1]] == '  ':
+                        board[positions[0]][positions[1]] = 'x '
+        return board
+
+    ## This just checks a 3x3 tile surrounding the king. Empty spots get an "x" and pieces of the opposite team become killable.
+    def king_moves(index):
+        for y in range(3):
+            for x in range(3):
+                if on_board((index[0] - 1 + y, index[1] - 1 + x)):
+                    if board[index[0] - 1 + y][index[1] - 1 + x] == '  ':
+                        board[index[0] - 1 + y][index[1] - 1 + x] = 'x '
+                    else:
+                        if board[index[0] - 1 + y][index[1] - 1 + x].team != board[index[0]][index[1]].team:
+                            board[index[0] - 1 + y][index[1] - 1 + x].killable = True
+        return board
+
+    ## Same as the rook but this time it creates 4 lists for the diagonal directions and so the list comprehension is a little bit trickier.
+    def bishop_moves(index):
+        diagonals = [[[index[0] + i, index[1] + i] for i in range(1, 8)],
+                    [[index[0] + i, index[1] - i] for i in range(1, 8)],
+                    [[index[0] - i, index[1] + i] for i in range(1, 8)],
+                    [[index[0] - i, index[1] - i] for i in range(1, 8)]]
+
+        for direction in diagonals:
+            for positions in direction:
+                if on_board(positions):
+                    if board[positions[0]][positions[1]] == '  ':
+                        board[positions[0]][positions[1]] = 'x '
+                    else:
+                        if board[positions[0]][positions[1]].team != board[index[0]][index[1]].team:
+                            board[positions[0]][positions[1]].killable = True
+                        break
+        return board
+
+    ## applies the rook moves to the board then the bishop moves because a queen is basically a rook and bishop in the same position.
+    def queen_moves(index):
+        board = rook_moves(index)
+        board = bishop_moves(index)
+        return board
 
 
-    pygame.display.set_caption('Sigma\'s chess')
-    while running :
+    ## Checks a 5x5 grid around the piece and uses pythagoras to see if if a move is valid. Valid moves will be a distance of sqrt(5) from centre
+    def knight_moves(index):
+        for i in range(-2, 3):
+            for j in range(-2, 3):
+                if i ** 2 + j ** 2 == 5:
+                    if on_board((index[0] + i, index[1] + j)):
+                        if board[index[0] + i][index[1] + j] == '  ':
+                            board[index[0] + i][index[1] + j] = 'x '
+                        else:
+                            if board[index[0] + i][index[1] + j].team != board[index[0]][index[1]].team:
+                                board[index[0] + i][index[1] + j].killable = True
+        return board
 
-        pygame.display.flip() 
-        screen.blit(background,[0,0])
-    #Load the background chess board image:
-    #Load an image with all the pieces on it:
+    board = [['  ' for i in range(8)] for i in range(8)]
+
+    ## Creates instances of chess pieces, so far we got: pawn, king, rook and bishop
+    ## The first parameter defines what team its on and the second, what type of piece it is
+    bp = PieceG('b', 'p', 'bP.png')
+    wp = PieceG('w', 'p', 'wp.png')
+    bk = PieceG('b', 'k', 'bK.png')
+    wk = PieceG('w', 'k', 'wK.png')
+    br = PieceG('b', 'r', 'bR.png')
+    wr = PieceG('w', 'r', 'wR.png')
+    bb = PieceG('b', 'b', 'bB.png')
+    wb = PieceG('w', 'b', 'wB.png')
+    bq = PieceG('b', 'q', 'bQ.png')
+    wq = PieceG('w', 'q', 'wQ.png')
+    bkn = PieceG('b', 'kn', 'bN.png')
+    wkn = PieceG('w', 'kn', 'wN.png')
+
+
+    starting_order = {(0, 0): pygame.image.load('images/bR.png'), (1, 0): pygame.image.load('images/bN.png'),
+                    (2, 0): pygame.image.load('images/bB.png'), (3, 0): pygame.image.load('images/bQ.png'),
+                    (4, 0): pygame.image.load('images/bK.png'), (5, 0): pygame.image.load('images/bB.png'),
+                    (6, 0): pygame.image.load('images/bN.png'), (7, 0): pygame.image.load('images/bR.png'),
+                    (0, 1): pygame.image.load('images/bp.png'), (1, 1): pygame.image.load('images/bp.png'),
+                    (2, 1): pygame.image.load('images/bp.png'), (3, 1): pygame.image.load('images/bp.png'),
+                    (4, 1): pygame.image.load('images/bp.png'), (5, 1): pygame.image.load('images/bp.png'),
+                    (6, 1): pygame.image.load('images/bp.png'), (7, 1): pygame.image.load('images/bp.png'),
+
+                    (0, 2): None, (1, 2): None, (2, 2): None, (3, 2): None,
+                    (4, 2): None, (5, 2): None, (6, 2): None, (7, 2): None,
+                    (0, 3): None, (1, 3): None, (2, 3): None, (3, 3): None,
+                    (4, 3): None, (5, 3): None, (6, 3): None, (7, 3): None,
+                    (0, 4): None, (1, 4): None, (2, 4): None, (3, 4): None,
+                    (4, 4): None, (5, 4): None, (6, 4): None, (7, 4): None,
+                    (0, 5): None, (1, 5): None, (2, 5): None, (3, 5): None,
+                    (4, 5): None, (5, 5): None, (6, 5): None, (7, 5): None,
+
+                    (0, 6): pygame.image.load('images/wp.png'), (1, 6): pygame.image.load('images/wp.png'),
+                    (2, 6): pygame.image.load('images/wp.png'), (3, 6): pygame.image.load('images/wp.png'),
+                    (4, 6): pygame.image.load('images/wp.png'), (5, 6): pygame.image.load('images/wp.png'),
+                    (6, 6): pygame.image.load('images/wp.png'), (7, 6): pygame.image.load('images/wp.png'),
+                    (0, 7): pygame.image.load('images/wR.png'), (1, 7): pygame.image.load('images/wN.png'),
+                    (2, 7): pygame.image.load('images/wB.png'), (3, 7): pygame.image.load('images/wQ.png'),
+                    (4, 7): pygame.image.load('images/wK.png'), (5, 7): pygame.image.load('images/wB.png'),
+                    (6, 7): pygame.image.load('images/wN.png'), (7, 7): pygame.image.load('images/wR.png'),}
+
+    ## returns the input if the input is within the boundaries of the board
+    def on_board(position):
+        if position[0] > -1 and position[1] > -1 and position[0] < 8 and position[1] < 8:
+            return True
+
+    ## This takes in a piece object and its index then runs then checks where that piece can move using separately defined functions for each type of piece.
+    def select_moves(piece, index, moves):
+        if check_team(moves, index):
+            if piece.type == 'p':
+                if piece.team == 'b':
+                    return highlight(pawn_moves_b(index))
+                else:
+                    return highlight(pawn_moves_w(index))
+
+            if piece.type == 'k':
+                return highlight(king_moves(index))
+
+            if piece.type == 'r':
+                return highlight(rook_moves(index))
+
+            if piece.type == 'b':
+                return highlight(bishop_moves(index))
+
+            if piece.type == 'q':
+                return highlight(queen_moves(index))
+
+            if piece.type == 'kn':
+                return highlight(knight_moves(index))
+
+
+    
+
+    ## resets "x's" and killable pieces
+    def deselect():
+        for row in range(len(board)):
+            for column in range(len(board[0])):
+                if board[row][column] == 'x ':
+                    board[row][column] = '  '
+                else:
+                    try:
+                        board[row][column].killable = False
+                    except:
+                        pass
+        return convert_to_readable(board)
+
+
+    
+
+
+    ## This creates 4 lists for up, down, left and right and checks all those spaces for pieces of the opposite team. The list comprehension is pretty long so if you don't get it just msg me.
+    def rook_moves(index):
+        cross = [[[index[0] + i, index[1]] for i in range(1, 8 - index[0])],
+                [[index[0] - i, index[1]] for i in range(1, index[0] + 1)],
+                [[index[0], index[1] + i] for i in range(1, 8 - index[1])],
+                [[index[0], index[1] - i] for i in range(1, index[1] + 1)]]
+
+        for direction in cross:
+            for positions in direction:
+                if on_board(positions):
+                    if board[positions[0]][positions[1]] == '  ':
+                        board[positions[0]][positions[1]] = 'x '
+                    else:
+                        if board[positions[0]][positions[1]].team != board[index[0]][index[1]].team:
+                            board[positions[0]][positions[1]].killable = True
+                        break
+        return board
+
+    WIN = pygame.display.set_mode((WIDTH, WIDTH))
+
+    """ This is creating the window that we are playing on, it takes a tuple argument which is the dimensions of the window so in this case 800 x 800px
+    """
+
+    pygame.display.set_caption("Chess")
+    WHITE = (255, 255, 255)
+    GREY = (128, 128, 128)
+    YELLOW = (204, 204, 0)
+    BLUE = (50, 255, 255)
+    BLACK = (0, 0, 0)
+
+
+    class Node:
+        def __init__(self, row, col, width):
+            self.row = row
+            self.col = col
+            self.x = int(row * width)
+            self.y = int(col * width)
+            self.colour = WHITE
+            self.occupied = None
+
+        def draw(self, WIN):
+            pygame.draw.rect(WIN, self.colour, (self.x, self.y, WIDTH / 8, WIDTH / 8))
+
+        def setup(self, WIN):
+            if starting_order[(self.row, self.col)]:
+                if starting_order[(self.row, self.col)] == None:
+                    pass
+                else:
+                    WIN.blit(starting_order[(self.row, self.col)], (self.x, self.y))
+
+    """
+    For now it is drawing a rectangle but eventually we are going to need it
+    to use blit to draw the chess pieces instead
+    """
+
+
+    def make_grid(rows, width):
+        grid = []
+        gap = WIDTH // rows
+        print(gap)
+        for i in range(rows):
+            grid.append([])
+            for j in range(rows):
+                node = Node(j, i, gap)
+                grid[i].append(node)
+                if (i+j)%2 ==1:
+                    grid[i][j].colour = GREY
+        return grid
+        """
+        This is creating the nodes thats are on the board(so the chess tiles)
+        I've put them into a 2d array which is identical to the dimesions of the chessboard
+        """
+
+
+    
+
+
+    def update_display(win, grid, rows, width):
+        for row in grid:
+            for spot in row:
+                spot.draw(win)
+                spot.setup(win)
+        draw_grid(win, rows, width)
+        pygame.display.update()
+
+
+    def Find_Node(pos, WIDTH):
+        interval = WIDTH / 8
+        y, x = pos
+        rows = y // interval
+        columns = x // interval
+        return int(rows), int(columns)
+
+
+    def display_potential_moves(positions, grid):
+        for i in positions:
+            x, y = i
+            grid[x][y].colour = BLUE
+            """
+            Displays all the potential moves
+            """
+
+
+    def Do_Move(OriginalPos, FinalPosition, WIN):
+        starting_order[FinalPosition] = starting_order[OriginalPos]
+        starting_order[OriginalPos] = None
+
+
+    
+
+    create_board(board)
+    
+    moves = 0
+    selected = False
+    piece_to_move=[]
+    grid = make_grid(8, WIDTH)
+    while True :
+        pygame.time.delay(50) ##stops cpu dying
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            """This quits the program if the player closes the window"""
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                y, x = Find_Node(pos, WIDTH)
+                if selected == False:
+                    try:
+                        possible = select_moves((board[x][y]), (x,y), moves)
+                        for positions in possible:
+                            row, col = positions
+                            grid[row][col].colour = BLUE
+                        piece_to_move = x,y
+                        selected = True
+                    except:
+                        piece_to_move = []
+                        print('Can\'t select')
+                    #print(piece_to_move)
+
+                else:
+                    try:
+                        if board[x][y].killable == True:
+                            row, col = piece_to_move ## coords of original piece
+                            board[x][y] = board[row][col]
+                            board[row][col] = '  '
+                            deselect()
+                            remove_highlight(grid)
+                            Do_Move((col, row), (y, x), WIN)
+                            moves += 1
+                            print(convert_to_readable(board))
+                        else:
+                            deselect()
+                            remove_highlight(grid)
+                            selected = False
+                            print("Deselected")
+                    except:
+                        if board[x][y] == 'x ':
+                            row, col = piece_to_move
+                            board[x][y] = board[row][col]
+                            board[row][col] = '  '
+                            deselect()
+                            remove_highlight(grid)
+                            Do_Move((col, row), (y, x), WIN)
+                            moves += 1
+                            print(convert_to_readable(board))
+                        else:
+                            deselect()
+                            remove_highlight(grid)
+                            selected = False
+                            print("Invalid move")
+                    selected = False
+
+            update_display(WIN, grid, 8, WIDTH)
+
+
+
+def consoleGame(board:Board, opponentChoice:int):
+    movehistory=[]
    
-
-def consoleGame(board:Board):
-    turn = 0
     while not(board.is_checkmate()):
-        display_board(board)
-        print("A votre tour " + ("Joueur 1" if turn%2==0 else "Joueur 2" ))
-        if board.is_check():
-            print("Attention l'échéquier est en échec")
-        pieceDepart = ""
-        pieceArrivee = ""
+        if opponentChoice==2 and board.turn==False:
+            move_ai=play_ai(board)
+            display_board(board)
+            board.push(move_ai)
+            clearConsole()
+        else :
+            
+            display_board(board)
+            print("A votre tour", ("Joueur 1" if board.turn else "Joueur 2" ))
+            if board.is_check():
+                print("Attention vous êtes en échec")
+            
+            startPosition = getStartingPosition(board)
+            
+            clearConsole()
 
-        while not(re.fullmatch(r'[a-h][1-8]', pieceDepart)) or not(checkPiece(board, pieceDepart)):
-            pieceDepart = input("Donnez les coordonnees de la piece que vous souhaitez bouger ( par exemple: a5): ")
+            display_board(board, getPiece(startPosition))
 
-        clearConsole()
+            newPosition = getNewPosition(board, startPosition)
+            move = startPosition+newPosition
+            board.push(Move.from_uci(move))
+            clearConsole()
 
-        display_board(board, getPiece(pieceDepart))
-
-        gestion_attack_pion(pieceDepart)
-
-        while not(re.fullmatch(r'[a-h][1-8]', pieceArrivee)) or not(checkMove(board, pieceDepart, pieceArrivee)):
-            pieceArrivee = input("Ou doit aller cette piece ?")
-        move = Move.from_uci(pieceDepart+pieceArrivee)
-
-        board.push(move)
-
-        clearConsole()
-        print("check:",board.is_check(), "checkmate:", board.is_checkmate())
-        print( board.fen())
-        turn+=1
+            getBoardInfo(board)
+            
+            
+    print(("Joueur 1" if turn else "Joueur 2" ), "est en échec et mat,", ("Joueur 2" if turn else "Joueur 1" ), "a gagné" )
         
-
 if __name__ == "__main__":
-    main()
+    main(board)
