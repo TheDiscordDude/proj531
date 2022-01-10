@@ -1,5 +1,5 @@
 import enum
-from movements import *
+from console.movements import *
 
 class COLORS:
     WHITE = '\033[96m'
@@ -23,7 +23,8 @@ def display_board(board: Board, chosen_piece:int=None):
     positionY = 7
     positionX = 0
     nbLigne = 0
-    if chosen_piece :
+    print("chosen_piece None ?", chosen_piece)
+    if not(chosen_piece is None) :
         legal_places = getLegalPlaces(chosen_piece, board)
 
     for caractere in str(board):

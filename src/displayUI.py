@@ -3,14 +3,10 @@ from pygame import *
 import pygame.transform
 import pygame
 from pygame.locals import QUIT,MOUSEBUTTONDOWN,MOUSEBUTTONUP
+from utilsUI import * 
 
-## Creates a chess piece class that shows what team a piece is on, what type of piece it is and whether or not it can be killed by another selected piece.
-class PieceG:
-    def __init__(self, team, type, image, killable=False):
-        self.team = team
-        self.type = type
-        self.killable = killable
-        self.image = image
+
+
 
 def create_board(board):
     board[0] = [PieceG('b', 'r', 'bR.png'), PieceG('b', 'kn', 'bN.png'), PieceG('b', 'b', 'bB.png'), \
@@ -22,22 +18,11 @@ def create_board(board):
             PieceG('w', 'kn', 'wN.png'), PieceG('w', 'r', 'wR.png')]
 
     for i in range(8):
-        board[1][i] = PieceG('b', 'p', 'bp.png')
+        board[1][i] = PieceG('b', 'p', 'ryan60.jpg')
         board[6][i] = PieceG('w', 'p', 'wp.png')
     return board
 
-## returns a string that places the rows and columns of the board in a readable manner
-def convert_to_readable(board):
-    output = ''
 
-    for i in board:
-        for j in i:
-            try:
-                output += j.team + j.type + ', '
-            except:
-                output += j + ', '
-        output += '\n'
-    return output
 
 def draw_grid(win, rows, width):
     gap = width // 8
@@ -77,3 +62,72 @@ def remove_highlight(grid):
     return grid
 """this takes in 2 co-ordinate parameters which you can get as the position of the piece and then the position of the node it is moving to
 you can get those co-ordinates using my old function for swap"""
+
+
+def initImages():
+    images = {
+        (0, 0): pygame.image.load('images/bR.png'), 
+        (1, 0): pygame.image.load('images/bN.png'),
+        (2, 0): pygame.image.load('images/bB.png'), 
+        (3, 0): pygame.image.load('images/bQ.png'),
+        (4, 0): pygame.image.load('images/bK.png'), 
+        (5, 0): pygame.image.load('images/bB.png'),
+        (6, 0): pygame.image.load('images/bN.png'), 
+        (7, 0): pygame.image.load('images/bR.png'),
+        (0, 1): pygame.image.load('images/ryan60.jpg'), 
+        (1, 1): pygame.image.load('images/ryan60.jpg'),
+        (2, 1): pygame.image.load('images/ryan60.jpg'), 
+        (3, 1): pygame.image.load('images/ryan60.jpg'),
+        (4, 1): pygame.image.load('images/ryan60.jpg'), 
+        (5, 1): pygame.image.load('images/ryan60.jpg'),
+        (6, 1): pygame.image.load('images/ryan60.jpg'), 
+        (7, 1): pygame.image.load('images/ryan60.jpg'),
+        (0, 2): None, 
+        (1, 2): None, 
+        (2, 2): None, 
+        (3, 2): None,
+        (4, 2): None, 
+        (5, 2): None,
+        (6, 2): None, 
+        (7, 2): None,
+        (0, 3): None, 
+        (1, 3): None, 
+        (2, 3): None, 
+        (3, 3): None,
+        (4, 3): None, 
+        (5, 3): None, 
+        (6, 3): None, 
+        (7, 3): None,
+        (0, 4): None, 
+        (1, 4): None, 
+        (2, 4): None, 
+        (3, 4): None,
+        (4, 4): None, 
+        (5, 4): None, 
+        (6, 4): None, 
+        (7, 4): None,
+        (0, 5): None, 
+        (1, 5): None, 
+        (2, 5): None, 
+        (3, 5): None,
+        (4, 5): None, 
+        (5, 5): None, 
+        (6, 5): None, 
+        (7, 5): None,
+        (0, 6): pygame.image.load('images/wp.png'), 
+        (1, 6): pygame.image.load('images/wp.png'),
+        (2, 6): pygame.image.load('images/wp.png'), 
+        (3, 6): pygame.image.load('images/wp.png'),
+        (4, 6): pygame.image.load('images/wp.png'), 
+        (5, 6): pygame.image.load('images/wp.png'),
+        (6, 6): pygame.image.load('images/wp.png'), 
+        (7, 6): pygame.image.load('images/wp.png'),
+        (0, 7): pygame.image.load('images/wR.png'), 
+        (1, 7): pygame.image.load('images/wN.png'),
+        (2, 7): pygame.image.load('images/wB.png'), 
+        (3, 7): pygame.image.load('images/wQ.png'),
+        (4, 7): pygame.image.load('images/wK.png'),
+        (5, 7): pygame.image.load('images/wB.png'),
+        (6, 7): pygame.image.load('images/wN.png'), 
+        (7, 7): pygame.image.load('images/wR.png')}
+    return (images)

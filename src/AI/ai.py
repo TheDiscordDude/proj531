@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from chess import *
-
+import random as rd
 #import chess.svg
 import chess.pgn
 import chess.engine
@@ -67,6 +67,7 @@ kingstable = [
     -30, -40, -40, -50, -50, -40, -40, -30]
 
 
+#This function 
 def evaluate_turn(board):
     if board.is_checkmate():
         if board.turn:
@@ -123,7 +124,7 @@ def evaluate_turn(board):
 
 def move_selection(depth, board):
     try:
-        move = MemoryMappedReader("/binfile/computer.bin").weighted_choice(board).move
+        move = MemoryMappedReader("/binfile/Perfect2021.bin").weighted_choice(board).move
         return move
     except:
         bestMove = chess.Move.null()
@@ -177,13 +178,61 @@ def quiesce(alpha, beta,board):
                 alpha = score
     return alpha
 
+#ia vraiment débile, autiste tier
+def random_move_selection(board):
+    move = rd.choice(board.legal_moves)
+    return move
 
+def evaluate_pieces(board):
+    sum = 0
+    #blanc
+    wp = len(board.pieces(chess.PAWN, chess.WHITE))#Pion
+    wn = len(board.pieces(chess.KNIGHT, chess.WHITE))#Roi
+    wb = len(board.pieces(chess.BISHOP, chess.WHITE))#Fou
+    wr = len(board.pieces(chess.ROOK, chess.WHITE))#tour
+    wq = len(board.pieces(chess.QUEEN, chess.WHITE))#Reine
+    #noir
+    bp = len(board.pieces(chess.PAWN, chess.BLACK))#Pion
+    bn = len(board.pieces(chess.KNIGHT, chess.BLACK))#Roi
+    bb = len(board.pieces(chess.BISHOP, chess.BLACK))#Fou
+    br = len(board.pieces(chess.ROOK, chess.BLACK))#Tour
+    bq = len(board.pieces(chess.QUEEN, chess.BLACK))#Reine
+    if(board.turn):#si true donc joueur blanc de jouer
+        sum = wp+wn+wb+wr+wq
+    else:#sinon joueur noir (burk)
+        sum = bp+bn+bb+br+bq
+    return sum
 
-def play_ai(board):
-           
-        move = move_selection(2, board)
-        
-        return move
+def fct_ia_expert(board):
+    global move
+    if (evaluate_pieces(board) <= 16) and (evaluate_pieces(board) > 13):
+        move = move_selection(3, board)
+    elif (evaluate_pieces(board) <= 13) and (evaluate_pieces(board) > 10):
+        move = move_selection(4, board)
+    elif (evaluate_pieces(board) <= 10) and (evaluate_pieces(board) > 5):
+        move = move_selection(5, board)
+    elif (evaluate_pieces(board) <= 5) and (evaluate_pieces(board) > 0):
+        move = move_selection(6, board)
+    return move
+
+def fct_ia_dif_moy(board,lvl):
+  if(lvl):
+    move = move_selection(3, board)
+  else:
+    move = move_selection(1, board) 
+    return move
+
+def play_ai(board,ia_level):
+    if(ia_level == "4"):
+        move = fct_ia_expert(board)
+    elif(ia_level == "3"):
+        move = fct_ia_dif_moy(board,True)#difficile
+    elif(ia_level == "2"):
+      move = fct_ia_dif_moy(board,False)#niveau moyen
+    else:
+      pass
+        #move = random_move_selection(board)#Autisme
+    return move
 
 
 """

@@ -11,6 +11,8 @@ def getPiece(coords:str) -> int:
 
 def getLegalPlaces(piece, board):
     legal_places = SquareSet()
+    if piece == 0:
+        print()
     for i in board.legal_moves:
         if i.from_square == piece:
             p = str(i)[2:4]
@@ -49,12 +51,23 @@ def checkMove(board:Board, from_:str, to_:str) -> bool:
     return board.is_legal(Move.from_uci(from_+to_)) or board.is_legal(Move.from_uci(from_+to_+"r"))
 
 def getStartingPosition(board:Board) -> str:
+    """
+    Gets the start position of the move and verifies if it's legal
+    :pamam board: the current game board
+    :returns: a string with the coords of the position (a5, d2, etc.)
+    """
     startingPosition=""
     while not(checkPiece(board, startingPosition)):
         startingPosition = input("Donnez les coordonnees de la piece que vous souhaitez bouger ( par exemple: a5): ")
     return startingPosition
 
 def getNewPosition(board:Board, startingPosition:str) -> str:
+    """
+    Gets the end position of the move and verifies if the whole move is possible
+    :param board: the current game board
+    :param startingPosition: the starting position of the move
+    :returns: a uci string describing the move ("a2a4", "d5e6", etc.)
+    """
     newPiece = ""
     newPosition=""
 
@@ -67,5 +80,13 @@ def getNewPosition(board:Board, startingPosition:str) -> str:
     return newPosition+newPiece
     
 def getBoardInfo(board:Board):
+    """
+    Displays some board info when in DEVMODE
+    """
+    """
+    moves = ""
+    for i in board.legal_moves:
+        moves += " " + str(i)"""
+    
     print("check:",board.is_check(), "checkmate:", board.is_checkmate(), "turn", board.turn)
     print( board.fen())
