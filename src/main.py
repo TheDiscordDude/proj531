@@ -22,22 +22,32 @@ board = Board()
 #from collections import defaultdict 
 #from collections import Counter 
 #import threading 
+
 from AI.ai import play_ai
 def main(board:Board):
     #board = Board('1nb1kbn1/1pPPppp1/7r/p6p/8/8/PPP2PPP/RNBQKBNR b KQ - 0 8')
-    #board.fen()
     #board = Board("3rr1k1/pp3p2/1q2p2p/3pPbb1/2pP1p2/P1P2B1P/1P1NQPP1/3RR1K1 w - - 5 28")
 
     
     print(" Voulez-vous jouer en mode graphique ou console ?  ")
     print("1: Mode graphique")
     print("2: Mode console")
+    print("3: Mode puzzle")
     
-    choix=""
-    while not(re.fullmatch(r'[1-2]', choix)):
-        choix=input("Votre choix ? ")
-    choix = int(choix)
+    choice=""
+    while not(re.fullmatch(r'[1-3]', choice)):
+        choice=input("Votre choix ? ")
+    choice = int(choice)
 
+    sigmaChoice = ""
+    if choice == 1:
+        print("Voulez vous le mode Sigma ?\n"\
+                "1. Oui\n"\
+                "2. Non")
+        while not(re.fullmatch(r'[1-2]', sigmaChoice)):
+            sigmaChoice = input("Votre choix ?")
+        
+        sigmaChoice = int(sigmaChoice)
 
     print("\nVoulez-vous jouer contre une IA ou contre un joueur ? \n"\
         "1: Contre un Joueur \n"\
@@ -58,21 +68,23 @@ def main(board:Board):
         while not(re.fullmatch(r'[1-4]', ia_level)):
             ia_level = input("Votre choix ? ")
         ia_level = int(ia_level)
-    elif opponentChoice == 3:
-      puzzleGame(board)
 
-    if choix==1:
-        graphicalGame(board)
-    elif choix:
+    if choice==1:
+        graphicalGame(board, sigmaChoice)
+    elif choice == 2 :
         consoleGame(board, opponentChoice,ia_level)
+    elif choice == 3 :
+        puzzleGame()
 
-def graphicalGame(board:Board):
+
+
+def graphicalGame(board:Board, sigmaChoice:bool):
     board = [['  ' for i in range(8)] for i in range(8)]
 
     ## Creates instances of chess pieces, so far we got: pawn, king, rook and bishop
     ## The first parameter defines what team its on and the second, what type of piece it is
-    
-    bp = PieceG('b', 'p', 'ryan60.jpg')
+    """
+    bp = PieceG('b', 'p', 'bp.png')
     wp = PieceG('w', 'p', 'wp.png')
     bk = PieceG('b', 'k', 'bK.png')
     wk = PieceG('w', 'k', 'wK.png')
@@ -85,31 +97,21 @@ def graphicalGame(board:Board):
     bkn = PieceG('b', 'kn', 'bN.png')
     wkn = PieceG('w', 'kn', 'wN.png')
 
-    starting_order = initImages() 
+    if sigmaChoice==1:
+        bp = PieceG('b', 'p', 'ryan60.jpg')
+        wp = PieceG('w', 'p', 'andrew.jpg')
+        bk = PieceG('b', 'k', 'rami.png')
+        wk = PieceG('w', 'k', 'loic.jpg')
+        br = PieceG('b', 'r', 'calvin.png')
+        wr = PieceG('w', 'r', 'etienne.jpg')
+        bb = PieceG('b', 'b', 'william.png')
+        wb = PieceG('w', 'b', 'axel.jpg')
+        bq = PieceG('b', 'q', 'laurianne.jpg')
+        wq = PieceG('w', 'q', 'ouijdame.png')
+        bkn = PieceG('b', 'kn', 'damien.png')
+        wkn = PieceG('w', 'kn', 'adam.png')"""
 
-    ## This takes in a piece object and its index then runs then checks where that piece can move using separately defined functions for each type of piece.
-    def select_moves(piece, index, moves, board):
-        if check_team(moves, index, board):
-            if piece.type == 'p':
-                if piece.team == 'b':
-                    return highlight(pawn_moves_b(index, board))
-                else:
-                    return highlight(pawn_moves_w(index, board))
-
-            if piece.type == 'k':
-                return highlight(king_moves(index, board))
-
-            if piece.type == 'r':
-                return highlight(rook_moves(index, board))
-
-            if piece.type == 'b':
-                return highlight(bishop_moves(index, board))
-
-            if piece.type == 'q':
-                return highlight(queen_moves(index, board))
-
-            if piece.type == 'kn':
-                return highlight(knight_moves(index, board))
+    starting_order = initImages(sigmaChoice) 
 
     WIN = pygame.display.set_mode((WIDTH, WIDTH))
 
@@ -120,53 +122,18 @@ def graphicalGame(board:Board):
     BLUE = (50, 255, 255)
     BLACK = (0, 0, 0)
 
-    def make_grid(rows, width):
-        grid = []
-        gap = WIDTH // rows
-        print(gap)
-        for i in range(rows):
-            grid.append([])
-            for j in range(rows):
-                node = Node(j, i, gap)
-                grid[i].append(node)
-                if (i+j)%2 ==1:
-                    grid[i][j].colour = GREY
-        return grid
-
-    def update_display(win, grid, rows, width):
-        for row in grid:
-            for spot in row:
-                spot.draw(win)
-                spot.setup(win, starting_order)
-        draw_grid(win, rows, width)
-        pygame.display.update()
-
-
-    def Find_Node(pos, WIDTH):
-        interval = WIDTH / 8
-        y, x = pos
-        rows = y // interval
-        columns = x // interval
-        return int(rows), int(columns)
-
-    def display_potential_moves(positions, grid):
-        for i in positions:
-            x, y = i
-            grid[x][y].colour = BLUE
-         
-
     def Do_Move(OriginalPos, FinalPosition, WIN):
         starting_order[FinalPosition] = starting_order[OriginalPos]
         starting_order[OriginalPos] = None
 
-    create_board(board)
+    board = create_board(board)
     
     moves = 0
     selected = False
     piece_to_move=[]
     grid = make_grid(8, WIDTH)
     while True:
-        pygame.time.delay(50) ##stops cpu dying
+        pygame.time.delay(int((1/MAX_FPS)*100)) ##stops cpu dying
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -175,19 +142,19 @@ def graphicalGame(board:Board):
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                y, x = Find_Node(pos, WIDTH)
+                y, x = find_Node(pos, WIDTH)
                 if selected == False:
                     try:
                         possible = select_moves((board[x][y]), (x,y), moves, board)
+                        print(type(board))
                         for positions in possible:
                             row, col = positions
                             grid[row][col].colour = BLUE
-                        piece_to_move = x,y
+                        piece_to_move = x,y#modifier sa pour que l'ia lui envoie sont x,y
                         selected = True
                     except:
                         piece_to_move = []
                         print('Can\'t select')
-                    #print(piece_to_move)
 
                 else:
                     try:
@@ -199,7 +166,7 @@ def graphicalGame(board:Board):
                             remove_highlight(grid)
                             Do_Move((col, row), (y, x), WIN)
                             moves += 1
-                            print(convert_to_readable(board))
+                            print("sigma :",convert_to_readable(board))
                         else:
                             deselect(board)
                             remove_highlight(grid)
@@ -214,6 +181,11 @@ def graphicalGame(board:Board):
                             remove_highlight(grid)
                             Do_Move((col, row), (y, x), WIN)
                             moves += 1
+                            print('x :',x)#la chose a utiliserr pour l'ia
+                            print('y :',y)
+                            print()
+                            print('col :',col)
+                            print('row :',row)
                             print(convert_to_readable(board))
                         else:
                             deselect(board)
@@ -222,10 +194,15 @@ def graphicalGame(board:Board):
                             print("Invalid move")
                     selected = False
 
-            update_display(WIN, grid, 8, WIDTH)
+            update_display(WIN, grid, 8, WIDTH, starting_order)
 
 def consoleGame(board:Board, opponentChoice:int,ia_level:int):
-    movehistory=[]
+    """
+    The main loop for the game in console 
+    :param board: the current game board
+    :param opponentChoice: choice between pvp (1) or pve (2)
+    :param ia_level: the level of the ia
+    """
    
     while not(board.is_checkmate()):
         if opponentChoice==2 and board.turn==False:
@@ -265,14 +242,17 @@ def consoleGame(board:Board, opponentChoice:int,ia_level:int):
             
     print(("Joueur 1" if board.turn else "Joueur 2" ), "est en échec et mat,", ("Joueur 2" if board.turn else "Joueur 1" ), "a gagné" )
 
-def puzzleGame(board):
+def puzzleGame():
   file = open('src/level.txt', 'r').read().splitlines()
-  print(file)
   level = [ast.literal_eval(i) for i in file]
-  pr
   count = 1
+  print("Bienvenue dans le Mode Puzzle !")
+  print("Au travers de différents problèmes, votre but va être de mettre l'adversaire echec et mat en un seul coup.")
+  print("Bonne Chance !!!")
   for i in level:
-    print("Puzzle " + str(count) + " (MAT en 1) : ")
+    board = Board()
+    print("\nPuzzle " + str(count) + " (MAT en 1) : ")
+    print('Vous jouez les "Foncé".') if i[2] == ' w ' else print('Vous jouez les "Clairs".')
     while not(board.is_checkmate()) and board.fen() != i[1]:
       board = puzzleBoard(i[0], i[2])
       display_board(board)
@@ -281,11 +261,14 @@ def puzzleGame(board):
       newPosition = getNewPosition(board, startPosition)
       move = startPosition+newPosition
       board.push(Move.from_uci(move))
-      if board.is_checkmate() and board.fen().split(" ")[0] == i[1]:
-        print("Good Job ! Next Puzzle...")
+      if board.is_checkmate() and board.fen().split(" ")[0] == i[1] and i != level[-1]:
+        print("Bien joué ! On passe au prochain puzzle ...")
+      elif board.is_checkmate() and board.fen().split(" ")[0] == i[1] and i == level[-1]:
+        print("Vous avez réussi tout les puzzles ! Bien joué !")
       else:
-        print("Try Again !")
-      count += 1
+        print("Essayer une nouvelle fois !")
+    count += 1
+  return True
   
 def puzzleBoard(color:str, level:str):
   return Board(color + level)

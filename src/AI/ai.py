@@ -180,7 +180,8 @@ def quiesce(alpha, beta,board):
 
 #ia vraiment débile, autiste tier
 def random_move_selection(board):
-    move = rd.choice(board.legal_moves)
+    list_leg_move = list(board.legal_moves)#transforme l'objet en liste
+    move = rd.choice(list_leg_move)
     return move
 
 def evaluate_pieces(board):
@@ -230,8 +231,7 @@ def play_ai(board,ia_level):
     elif(ia_level == "2"):
       move = fct_ia_dif_moy(board,False)#niveau moyen
     else:
-      pass
-        #move = random_move_selection(board)#Autisme
+        move = random_move_selection(board)#Autisme
     return move
 
 

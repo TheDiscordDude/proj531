@@ -33,3 +33,10 @@ Prise en main de python chess
 -Changement de pièce lorsqu’un pion arrive dans le camp opposé pour mode console
 -Règle des 50 coups 
 -L’IA en console
+
+## Séance 4 (10/01/2022)
+
+- Corrections bug mode console
+- Ajout niveaux difficulté IA
+- Refactorisation code
+- Mode Puzzle réalisé

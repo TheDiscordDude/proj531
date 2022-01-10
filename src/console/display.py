@@ -23,7 +23,6 @@ def display_board(board: Board, chosen_piece:int=None):
     positionY = 7
     positionX = 0
     nbLigne = 0
-    print("chosen_piece None ?", chosen_piece)
     if not(chosen_piece is None) :
         legal_places = getLegalPlaces(chosen_piece, board)
 

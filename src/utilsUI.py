@@ -4,7 +4,7 @@ import pygame
 
 ## Creates a chess piece class that shows what team a piece is on, what type of piece it is and whether or not it can be killed by another selected piece.
 class PieceG:
-    def __init__(self, team, type, image, killable=False):
+    def __init__(self, team, type, image="", killable=False):
         self.team = team
         self.type = type
         self.killable = killable
@@ -54,3 +54,30 @@ def deselect(board):
                 except:
                     pass
     return convert_to_readable(board)
+
+
+
+def display_potential_moves(positions, grid):
+    for i in positions:
+        x, y = i
+        grid[x][y].colour = BLUE
+
+def find_Node(pos, WIDTH):
+    interval = WIDTH / 8
+    y, x = pos
+    rows = y // interval
+    columns = x // interval
+    return int(rows), int(columns)
+
+def make_grid(rows, width):
+    grid = []
+    gap = width // rows
+    print(gap)
+    for i in range(rows):
+        grid.append([])
+        for j in range(rows):
+            node = Node(j, i, gap)
+            grid[i].append(node)
+            if (i+j)%2 ==1:
+                grid[i][j].colour = GREY
+    return grid
