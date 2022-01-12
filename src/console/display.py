@@ -9,6 +9,9 @@ class COLORS:
     ENDC = '\033[0m'
 
 def clearConsole():
+    """
+    Clears the console
+    """
     print('\033[H\033[J', end='')
 
 def display_board(board: Board, chosen_piece:int=None):

@@ -2,14 +2,12 @@ from datetime import datetime
 
 from chess import *
 import random as rd
-#import chess.svg
 import chess.pgn
 import chess.engine
-#from IPython.display import SVG
 from chess.polyglot import open_reader, MemoryMappedReader
 
 
-# evaluation of the different position of each piece
+#Gives a grid containing the best positions of the pieces
 pawntable = [
     0, 0, 0, 0, 0, 0, 0, 0,
     5, 10, 10, -20, -20, 10, 10, 5,
@@ -67,18 +65,15 @@ kingstable = [
     -30, -40, -40, -50, -50, -40, -40, -30]
 
 
-#This function 
 def evaluate_turn(board):
-    if board.is_checkmate():
-        if board.turn:
-            return -9999
-        else:
-            return 9999
-    if board.is_stalemate():
-        return 0
-    if board.is_insufficient_material():
-        return 0
-    # renvoie le nombre de piece(blanc ou  noir) present dans l'echiquier
+    """
+    This function returns an evaluation of the pieces.
+    params: board of the game
+    returns: the summation  of the material scores and the individual score for white (positive) and black (negative), in
+    case we want to play AI against AI
+    """
+
+    # Returns the number of pieces (white or black) present in the chessboard
     wp = len(board.pieces(chess.PAWN, chess.WHITE))
     bp = len(board.pieces(chess.PAWN, chess.BLACK))
     wn = len(board.pieces(chess.KNIGHT, chess.WHITE))
@@ -122,11 +117,20 @@ def evaluate_turn(board):
         return -eval
 
 
+
 def move_selection(depth, board):
+    """
+    It will select the best move possible according to the parameters
+    :params depth: the level of descent in the tree of possible moves
+    :params board: the current chess board
+    :returns: the best move to play 
+    """
     try:
-        move = MemoryMappedReader("/binfile/Perfect2021.bin").weighted_choice(board).move
+        #Read a book wich contains a lot of opening move
+        move = MemoryMappedReader("/binfile/move.bin").weighted_choice(board).move
         return move
     except:
+        #If none of the move in the book are suitable,we will have to calculate the best
         bestMove = chess.Move.null()
         bestValue = -99999
         alpha = -100000
@@ -145,6 +149,14 @@ def move_selection(depth, board):
 
 
 def alphabeta(alpha, beta, depthleft,board):
+    """
+    :params alpha: Number that will allow the best move to be calculated
+    :params beta: Number that will allow the best move to be calculated
+    :params depthleft: Allows to restrict the move search
+    :params board: the current chess board
+
+    :returns: the best iteration according to the parameters
+    """
     bestscore = -9999
     if (depthleft == 0):
         return quiesce(alpha, beta, board)
@@ -162,6 +174,13 @@ def alphabeta(alpha, beta, depthleft,board):
 
 
 def quiesce(alpha, beta,board):
+    """
+    :params alpha: Number that will allow the best move to be calculated
+    :params beta: Number that will allow the best move to be calculated
+    :params board: the current chess board
+
+    :returns: the most "useful" iterations
+    """
     stand_pat = evaluate_turn(board)
     if (stand_pat >= beta):
         return beta
@@ -178,92 +197,61 @@ def quiesce(alpha, beta,board):
                 alpha = score
     return alpha
 
-#ia vraiment débile, autiste tier
+
 def random_move_selection(board):
-    list_leg_move = list(board.legal_moves)#transforme l'objet en liste
+    """
+    :params board: the current chess board
+
+    :returns: a random move
+    """
+    list_leg_move = list(board.legal_moves)#Turns the object into a list
     move = rd.choice(list_leg_move)
     return move
 
-def evaluate_pieces(board):
-    sum = 0
-    #blanc
-    wp = len(board.pieces(chess.PAWN, chess.WHITE))#Pion
-    wn = len(board.pieces(chess.KNIGHT, chess.WHITE))#Roi
-    wb = len(board.pieces(chess.BISHOP, chess.WHITE))#Fou
-    wr = len(board.pieces(chess.ROOK, chess.WHITE))#tour
-    wq = len(board.pieces(chess.QUEEN, chess.WHITE))#Reine
-    #noir
-    bp = len(board.pieces(chess.PAWN, chess.BLACK))#Pion
-    bn = len(board.pieces(chess.KNIGHT, chess.BLACK))#Roi
-    bb = len(board.pieces(chess.BISHOP, chess.BLACK))#Fou
-    br = len(board.pieces(chess.ROOK, chess.BLACK))#Tour
-    bq = len(board.pieces(chess.QUEEN, chess.BLACK))#Reine
-    if(board.turn):#si true donc joueur blanc de jouer
-        sum = wp+wn+wb+wr+wq
-    else:#sinon joueur noir (burk)
-        sum = bp+bn+bb+br+bq
-    return sum
 
 def fct_ia_expert(board):
+    """
+    :params board:the current chess board
+    
+    :returns: the best move
+    """
     global move
-    if (evaluate_pieces(board) <= 16) and (evaluate_pieces(board) > 13):
+    if (evaluate_turn(board) <= 16) and (evaluate_turn(board) > 13):
         move = move_selection(3, board)
-    elif (evaluate_pieces(board) <= 13) and (evaluate_pieces(board) > 10):
+    elif (evaluate_turn(board) <= 13) and (evaluate_turn(board) > 10):
         move = move_selection(4, board)
-    elif (evaluate_pieces(board) <= 10) and (evaluate_pieces(board) > 5):
+    elif (evaluate_turn(board) <= 10) and (evaluate_turn(board) > 5):
         move = move_selection(5, board)
-    elif (evaluate_pieces(board) <= 5) and (evaluate_pieces(board) > 0):
+    elif (evaluate_turn(board) <= 5) and (evaluate_turn(board) > 0):
         move = move_selection(6, board)
     return move
 
 def fct_ia_dif_moy(board,lvl):
-  if(lvl):
-    move = move_selection(3, board)
-  else:
-    move = move_selection(1, board) 
+    """
+    :params board: the current chess board
+    :params lvl: boolean which separates the medium from the hard difficulty
+
+    :returns: the best move
+    """
+    if(lvl):
+        move = move_selection(3, board)
+    else:
+        move = move_selection(1, board) 
     return move
 
 def play_ai(board,ia_level):
-    if(ia_level == "4"):
+    """
+    :params board: the current chess board
+    :params ia_level: which separates the medium from the hard difficulty
+
+    :returns: the best move according to the level of difficulty
+    """
+    if(ia_level == 4):
         move = fct_ia_expert(board)
-    elif(ia_level == "3"):
+    elif(ia_level == 3):
         move = fct_ia_dif_moy(board,True)#difficile
-    elif(ia_level == "2"):
-      move = fct_ia_dif_moy(board,False)#niveau moyen
+    elif(ia_level == 2):
+        move = fct_ia_dif_moy(board,False)#niveau moyen
     else:
-        move = random_move_selection(board)#Autisme
+        move = random_move_selection(board)#
     return move
-
-
-"""
-if board.is_checkmate():
-    if board.turn:
-        print("J1 GG")
-    else:
-        print("J2 GG")
-
-if board.is_stalemate():
-    print("match nul")
-if board.is_insufficient_material():
-    print("match nul")
-print(game)
-game.add_line(movehistory)
-game.headers["Event"] = "Self Tournament 2020"
-game.headers["Site"] = "Pune"
-
-game.headers["Round"] = 1
-game.headers["White"] = "Ai"
-game.headers["Black"] = "Ai"
-game.headers["Result"] = str(board.result(claim_draw=True))
-"""
-
-#SVG(chess.svg.board(board=board, size=400))
-
-"""
-if(game.headers["Result"] == "1/2-1/2"):
-    print("match null")
-elif(game.headers["Result"] == "1-0":
-    print("White win")
-else:
-    print("Black win")
-"""

@@ -5,19 +5,20 @@ import pygame
 from pygame.locals import QUIT,MOUSEBUTTONDOWN,MOUSEBUTTONUP
 from utilsUI import * 
 
-def create_board(board):
-    board[0] = [PieceG('b', 'r'), PieceG('b', 'kn'), PieceG('b', 'b'), \
+def create_board():
+    gridBoard = [['  ' for i in range(8)] for i in range(8)]
+    gridBoard[0] = [PieceG('b', 'r'), PieceG('b', 'kn'), PieceG('b', 'b'), \
             PieceG('b', 'q'), PieceG('b', 'k'), PieceG('b', 'b'), \
             PieceG('b', 'kn'), PieceG('b', 'r')]
 
-    board[7] = [PieceG('w', 'r'), PieceG('w', 'kn'), PieceG('w', 'b'), \
+    gridBoard[7] = [PieceG('w', 'r'), PieceG('w', 'kn'), PieceG('w', 'b'), \
             PieceG('w', 'q'), PieceG('w', 'k'), PieceG('w', 'b'), \
             PieceG('w', 'kn'), PieceG('w', 'r')]
 
     for i in range(8):
-        board[1][i] = PieceG('b', 'p')
-        board[6][i] = PieceG('w', 'p')
-    return board
+        gridBoard[1][i] = PieceG('b', 'p')
+        gridBoard[6][i] = PieceG('w', 'p')
+    return gridBoard
 
 def draw_grid(win, rows, width):
     gap = width // 8
@@ -32,18 +33,19 @@ from each other and that is what this function does"""
 
 
 ## Takes in board as argument then returns 2d array containing positions of valid moves
-def highlight(board):
+def highlight(gridBoard):
     highlighted = []
-    for i in range(len(board)):
-        for j in range(len(board[0])):
-            if board[i][j] == 'x ':
+    for i in range(len(gridBoard)):
+        for j in range(len(gridBoard[0])):
+            if gridBoard[i][j] == 'x ':
                 highlighted.append((i, j))
             else:
                 try:
-                    if board[i][j].killable:
+                    if gridBoard[i][j].killable:
                         highlighted.append((i, j))
                 except:
                     pass
+    print(highlighted)
     return highlighted
 
 
@@ -51,10 +53,11 @@ def remove_highlight(grid):
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             if (i+j)%2 == 0:
-                grid[i][j].colour = WHITE
+                grid[i][j].color = WHITE
             else:
-                grid[i][j].colour = GREY
+                grid[i][j].color = GREY
     return grid
+    
 """this takes in 2 co-ordinate parameters which you can get as the position of the piece and then the position of the node it is moving to
 you can get those co-ordinates using my old function for swap"""
 
@@ -196,6 +199,7 @@ def initImages(sigmaChoice):
     return (images)
 
 def update_display(win, grid, rows, width, starting_order):
+
     for row in grid:
         for spot in row:
             spot.draw(win)

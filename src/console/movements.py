@@ -9,7 +9,13 @@ def getPiece(coords:str) -> int:
     """
     return (ord(coords[0])-97)+(int(coords[1:])-1)*8
 
-def getLegalPlaces(piece, board):
+def getLegalPlaces(piece, board): 
+    """
+    Gets all the places the piece can go to
+    :param piece: the chosen piece that will move. it's an int
+    :param board: the current game board
+    :returns: a squareset containing all the possible places the piece could go
+    """
     legal_places = SquareSet()
     if piece == 0:
         print()
@@ -82,6 +88,7 @@ def getNewPosition(board:Board, startingPosition:str) -> str:
 def getBoardInfo(board:Board):
     """
     Displays some board info when in DEVMODE
+    :param board: the current game board
     """
     """
     moves = ""

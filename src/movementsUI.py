@@ -1,76 +1,107 @@
 from displayUI import *
 from utilsUI import * 
-## returns the input if the input is within the boundaries of the board
+from consts import DEV_MODE
+from AI.ai import play_ai
+
 def on_board(position):
     if position[0] > -1 and position[1] > -1 and position[0] < 8 and position[1] < 8:
         return True
 
-## Basically, check black and white pawns separately and checks the square above them. If its free that space gets an "x" and if it is occupied by a piece of the opposite team then that piece becomes killable.
-def pawn_moves_b(index, board):
+
+def pawn_moves_b(index, gridBoard):
+    """
+    pawn_moves_b is the function allowing to move the pawn in the black team
+    :param index: type list is the position of the pawn
+    :param gridboard: type list is the board
+    :returns: the new gridboard
+    """
     if index[0] == 1:
-        if board[index[0] + 2][index[1]] == '  ' and board[index[0] + 1][index[1]] == '  ':
-            board[index[0] + 2][index[1]] = 'x '
+        if gridBoard[index[0] + 2][index[1]] == '  ' and gridBoard[index[0] + 1][index[1]] == '  ':
+            gridBoard[index[0] + 2][index[1]] = 'x '
     bottom3 = [[index[0] + 1, index[1] + i] for i in range(-1, 2)]
 
     for positions in bottom3:
         if on_board(positions):
             if bottom3.index(positions) % 2 == 0:
                 try:
-                    if board[positions[0]][positions[1]].team != 'b':
-                        board[positions[0]][positions[1]].killable = True
+                    if gridBoard[positions[0]][positions[1]].team != 'b':
+                        gridBoard[positions[0]][positions[1]].killable = True
                 except:
                     pass
             else:
-                if board[positions[0]][positions[1]] == '  ':
-                    board[positions[0]][positions[1]] = 'x '
-    return board
+                if gridBoard[positions[0]][positions[1]] == '  ':
+                    gridBoard[positions[0]][positions[1]] = 'x '
+    return gridBoard
 
-def check_team(moves, index, board):
+
+
+def check_team(moveCounter, index, gridBoard):
+    """
+    check_team is the function checking if the move is possible
+    :param index: type list is the position of the piece
+    :param moveCounter: number of moves from the begining
+    :param gridBoard: type list is the board represneted by 2 dimensionnal list
+    :returns: a boolean if it is the turn of the index's team 
+    """
     row, col = index
-    if moves%2 == 0:
-        if board[row][col].team == 'w':
-            return True
+    if moveCounter%2 == 0:
+        return gridBoard[row][col].team == 'w'
     else:
-        if board[row][col].team == 'b':
-            return True
+        return gridBoard[row][col].team == 'b'
+       
 
-
-def pawn_moves_w(index, board):
+def pawn_moves_w(index, gridBoard):
+    """
+    pawn_moves_w is the function allowing to move the pawn in the white team
+    :param index: type list is the position of the pawn
+    :param gridboard: type list is the board
+    :returns: the new gridboard
+    """
     if index[0] == 6:
-        if board[index[0] - 2][index[1]] == '  ' and board[index[0] - 1][index[1]] == '  ':
-            board[index[0] - 2][index[1]] = 'x '
+        if gridBoard[index[0] - 2][index[1]] == '  ' and gridBoard[index[0] - 1][index[1]] == '  ':
+            gridBoard[index[0] - 2][index[1]] = 'x '
     top3 = [[index[0] - 1, index[1] + i] for i in range(-1, 2)]
 
     for positions in top3:
         if on_board(positions):
             if top3.index(positions) % 2 == 0:
                 try:
-                    if board[positions[0]][positions[1]].team != 'w':
-                        board[positions[0]][positions[1]].killable = True
+                    if gridBoard[positions[0]][positions[1]].team != 'w':
+                        gridBoard[positions[0]][positions[1]].killable = True
                 except:
                     pass
             else:
-                if board[positions[0]][positions[1]] == '  ':
-                    board[positions[0]][positions[1]] = 'x '
-    return board
+                if gridBoard[positions[0]][positions[1]] == '  ':
+                    gridBoard[positions[0]][positions[1]] = 'x '
+    return gridBoard
 
-
-## This just checks a 3x3 tile surrounding the king. Empty spots get an "x" and pieces of the opposite team become killable.
-def king_moves(index, board):
+def king_moves(index, gridBoard):
+    """
+    king_moves is the function allowing to move the king
+    :param index: type list is the position of the king
+    :param gridboard: type list is the board
+    :returns: the new gridboard
+    """
     for y in range(3):
         for x in range(3):
             if on_board((index[0] - 1 + y, index[1] - 1 + x)):
-                if board[index[0] - 1 + y][index[1] - 1 + x] == '  ':
-                    board[index[0] - 1 + y][index[1] - 1 + x] = 'x '
+                if gridBoard[index[0] - 1 + y][index[1] - 1 + x] == '  ':
+                    gridBoard[index[0] - 1 + y][index[1] - 1 + x] = 'x '
                 else:
-                    if board[index[0] - 1 + y][index[1] - 1 + x].team != board[index[0]][index[1]].team:
-                        board[index[0] - 1 + y][index[1] - 1 + x].killable = True
-    return board
+                    if gridBoard[index[0] - 1 + y][index[1] - 1 + x].team != gridBoard[index[0]][index[1]].team:
+                        gridBoard[index[0] - 1 + y][index[1] - 1 + x].killable = True
+    return gridBoard
 
 
 
-## Same as the rook but this time it creates 4 lists for the diagonal directions and so the list comprehension is a little bit trickier.
-def bishop_moves(index, board):
+
+def bishop_moves(index, gridBoard):
+    """
+    bishop_moves is the function allowing to move the bishop
+    :param index: type list is the position of the bishop
+    :param gridBoard: type list is the board
+    :returns: the new gridboard
+    """
     diagonals = [[[index[0] + i, index[1] + i] for i in range(1, 8)],
                 [[index[0] + i, index[1] - i] for i in range(1, 8)],
                 [[index[0] - i, index[1] + i] for i in range(1, 8)],
@@ -79,31 +110,43 @@ def bishop_moves(index, board):
     for direction in diagonals:
         for positions in direction:
             if on_board(positions):
-                if board[positions[0]][positions[1]] == '  ':
-                    board[positions[0]][positions[1]] = 'x '
+                if gridBoard[positions[0]][positions[1]] == '  ':
+                    gridBoard[positions[0]][positions[1]] = 'x '
                 else:
-                    if board[positions[0]][positions[1]].team != board[index[0]][index[1]].team:
-                        board[positions[0]][positions[1]].killable = True
+                    if gridBoard[positions[0]][positions[1]].team != gridBoard[index[0]][index[1]].team:
+                        gridBoard[positions[0]][positions[1]].killable = True
                     break
-    return board
+    return gridBoard
 
 
 
-## Checks a 5x5 grid around the piece and uses pythagoras to see if if a move is valid. Valid moves will be a distance of sqrt(5) from centre
-def knight_moves(index, board):
+
+def knight_moves(index, gridBoard):
+    """
+    knight_moves is the function allowing to move the knight
+    :param index: type list is the position of the knight
+    :param gridboard: type list is the board
+    :returns: the new gridboard
+    """
     for i in range(-2, 3):
         for j in range(-2, 3):
             if i ** 2 + j ** 2 == 5:
                 if on_board((index[0] + i, index[1] + j)):
-                    if board[index[0] + i][index[1] + j] == '  ':
-                        board[index[0] + i][index[1] + j] = 'x '
+                    if gridBoard[index[0] + i][index[1] + j] == '  ':
+                        gridBoard[index[0] + i][index[1] + j] = 'x '
                     else:
-                        if board[index[0] + i][index[1] + j].team != board[index[0]][index[1]].team:
-                            board[index[0] + i][index[1] + j].killable = True
-    return board
+                        if gridBoard[index[0] + i][index[1] + j].team != gridBoard[index[0]][index[1]].team:
+                            gridBoard[index[0] + i][index[1] + j].killable = True
+    return gridBoard
 
-## This creates 4 lists for up, down, left and right and checks all those spaces for pieces of the opposite team. The list comprehension is pretty long so if you don't get it just msg me.
-def rook_moves(index, board):
+
+def rook_moves(index, gridBoard):
+    """
+    rook_moves is the function allowing to move the rook
+    :param index: type list is the position of the rook
+    :param gridBoard: type list is the board
+    :returns: the new gridboard
+    """
     cross = [[[index[0] + i, index[1]] for i in range(1, 8 - index[0])],
             [[index[0] - i, index[1]] for i in range(1, index[0] + 1)],
             [[index[0], index[1] + i] for i in range(1, 8 - index[1])],
@@ -112,41 +155,79 @@ def rook_moves(index, board):
     for direction in cross:
         for positions in direction:
             if on_board(positions):
-                if board[positions[0]][positions[1]] == '  ':
-                    board[positions[0]][positions[1]] = 'x '
+                if gridBoard[positions[0]][positions[1]] == '  ':
+                    gridBoard[positions[0]][positions[1]] = 'x '
                 else:
-                    if board[positions[0]][positions[1]].team != board[index[0]][index[1]].team:
-                        board[positions[0]][positions[1]].killable = True
+                    if gridBoard[positions[0]][positions[1]].team != gridBoard[index[0]][index[1]].team:
+                        gridBoard[positions[0]][positions[1]].killable = True
                     break
-    return board
-
-## applies the rook moves to the board then the bishop moves because a queen is basically a rook and bishop in the same position.
-def queen_moves(index, board):
-    board = rook_moves(index, board)
-    board = bishop_moves(index, board)
-    return board
+    return gridBoard
 
 
-## This takes in a piece object and its index then runs then checks where that piece can move using separately defined functions for each type of piece.
-def select_moves(piece, index, moves, board):
-    if check_team(moves, index, board):
+def queen_moves(index, gridBoard):
+    """
+    queen_moves is the function allowing to move the queen
+    :param index: type list is the position of the queen
+    :param gridBoard: type list is the board
+    :returns: the new gridboard
+    """
+    gridBoard = rook_moves(index, gridBoard)
+    gridBoard = bishop_moves(index, gridBoard)
+    return gridBoard
+
+
+def select_moves(WIN,opponentChoice,starting_order,piece, index, moves, gridBoard,board,grid,WIDTH):
+    """
+    select_moves is the function highlighting the move possible for each piece
+    :param index: type list is the position of the piece
+    :param gridBoard: type list is the board
+    :param piece: type str is the piece
+    :returns: the gridboard with highlighted move  for piece choosen
+    
+    """
+    if check_team(moves, index, gridBoard):
         if piece.type == 'p':
             if piece.team == 'b':
-                return highlight(pawn_moves_b(index, board))
+                return highlight(pawn_moves_b(index, gridBoard))
             else:
-                return highlight(pawn_moves_w(index, board))
+                return highlight(pawn_moves_w(index, gridBoard))
 
         if piece.type == 'k':
-            return highlight(king_moves(index, board))
+            return highlight(king_moves(index, gridBoard))
 
         if piece.type == 'r':
-            return highlight(rook_moves(index, board))
+            return highlight(rook_moves(index, gridBoard))
 
         if piece.type == 'b':
-            return highlight(bishop_moves(index, board))
+            return highlight(bishop_moves(index, gridBoard))
 
         if piece.type == 'q':
-            return highlight(queen_moves(index, board))
+            return highlight(queen_moves(index, gridBoard))
 
         if piece.type == 'kn':
-            return highlight(knight_moves(index, board))
+            return highlight(knight_moves(index, gridBoard))
+
+def do_Move(OriginalPos, FinalPosition, starting_order, WIN, board):
+    if DEV_MODE:
+        print("Move : ", OriginalPos, FinalPosition)
+    starting_order[FinalPosition] = starting_order[OriginalPos]
+    starting_order[OriginalPos] = None
+    uciMove = convert_custom_move_to_uci([OriginalPos, FinalPosition])
+    board.push_uci(uciMove)
+    if DEV_MODE:
+        print(board)
+    return starting_order
+
+def do_move_AI(board, ia_level, starting_order, gridBoard):
+    move = play_ai(board, ia_level)
+    customMove = convert_uci_move_to_custom_list(move)
+
+    starting_order[customMove[1]] = starting_order[customMove[0]]
+    starting_order[customMove[0]] = None
+
+    gridBoard[customMove[1][1]][customMove[1][0]] = gridBoard[customMove[0][1]][customMove[0][0]] 
+    gridBoard[customMove[0][1]][customMove[0][0]] = '  '
+
+    board.push(move)
+
+    return starting_order
