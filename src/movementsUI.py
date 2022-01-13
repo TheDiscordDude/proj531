@@ -206,6 +206,7 @@ def select_moves(WIN,opponentChoice,starting_order,piece, index, moves, gridBoar
 
         if piece.type == 'kn':
             return highlight(knight_moves(index, gridBoard))
+            
 
 def do_Move(OriginalPos, FinalPosition, starting_order, WIN, board):
     if DEV_MODE:
@@ -216,10 +217,13 @@ def do_Move(OriginalPos, FinalPosition, starting_order, WIN, board):
     board.push_uci(uciMove)
     if DEV_MODE:
         print(board)
+        print(board.fen())
     return starting_order
 
 def do_move_AI(board, ia_level, starting_order, gridBoard):
+    
     move = play_ai(board, ia_level)
+
     customMove = convert_uci_move_to_custom_list(move)
 
     starting_order[customMove[1]] = starting_order[customMove[0]]
@@ -229,5 +233,6 @@ def do_move_AI(board, ia_level, starting_order, gridBoard):
     gridBoard[customMove[0][1]][customMove[0][0]] = '  '
 
     board.push(move)
+    
 
     return starting_order

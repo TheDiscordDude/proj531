@@ -5,15 +5,12 @@ from movementsUI import *
 from movementsUI import do_Move
 import pygame
 import ast
-
 import time
-
 import sys
-
 from pygame import *
 from consts import *
-
 from AI.ai import play_ai
+
 
 def main(board:Board):
     """
@@ -43,8 +40,6 @@ def main(board:Board):
             sigmaChoice = input("Votre choix ?")
         
         sigmaChoice = int(sigmaChoice)
-
-    
     if choice != 3:
         print("\nVoulez-vous jouer contre une IA ou contre un joueur ? \n"\
             "1: Contre un Joueur \n"\
@@ -66,13 +61,11 @@ def main(board:Board):
         ia_level = int(ia_level)
 
     if choice==1:
-        graphicalGame(board, sigmaChoice, opponentChoice)
+        graphicalGame(board, sigmaChoice, opponentChoice, ia_level)
     elif choice == 2 :
         consoleGame(board, opponentChoice,ia_level)
     elif choice == 3 :
         puzzleGame()
-
-
 
 def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1):
     """ Creates instances of chess pieces,
@@ -94,8 +87,10 @@ def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1)
     grid = make_grid(8, WIDTH)
     while not(board.is_checkmate()):
         pygame.time.delay(int((1/MAX_FPS)*100)) ##stops cpu dying
-        if opponentChoice==2 and board.turn == False : 
+        print(moves,board.turn)
+        if opponentChoice==2 and board.turn == False and moves%2 != 0 : 
             do_move_AI(board, ia_level, starting_order, gridBoard)
+            
         else : 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -107,7 +102,7 @@ def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1)
                     y, x = find_Node(pos, WIDTH)
                     if selected == False:
                         try:
-                            print("TURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRN :",board.turn)
+              
                             possibleMoves = select_moves(WIN,opponentChoice,starting_order,(gridBoard[x][y]), (x,y), moves, gridBoard, board,grid,WIDTH)
                             print(type(gridBoard))
                             print(possibleMoves)
@@ -149,7 +144,7 @@ def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1)
                             if gridBoard[x][y] == 'x ':
                                 row, col = piece_to_move
                                 gridBoard[x][y] = gridBoard[row][col]
-                                gridBoard[row][col] = '  ''  '
+                                gridBoard[row][col] = '  '
                                 deselect(gridBoard)
                                 remove_highlight(grid)
                                 starting_order = do_Move((col, row), (y, x), starting_order, WIN, board)
@@ -168,8 +163,8 @@ def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1)
                                 if DEV_MODE:
                                     print("Invalid move")
                         selected = False
-
-                update_display(WIN, grid, 8, WIDTH, starting_order)
+            
+            update_display(WIN, grid, 8, WIDTH, starting_order)
             
            
     print("L'équipe", ("Noir" if  board.turn else "Blanc"), "a gagné")
@@ -184,6 +179,7 @@ def consoleGame(board:Board, opponentChoice:int,ia_level:int):
    
     while not(board.is_checkmate()):
         if opponentChoice==2 and board.turn==False:
+            print("L\'IA réfléchie ...")
             move_ai=play_ai(board,ia_level)
             display_board(board)
             board.push(move_ai)
@@ -191,7 +187,6 @@ def consoleGame(board:Board, opponentChoice:int,ia_level:int):
             if not(DEV_MODE):
                 clearConsole()
         else :
-            
             display_board(board)
             print("A votre tour", ("Joueur 1" if board.turn else "Joueur 2" ))
             if board.is_check():

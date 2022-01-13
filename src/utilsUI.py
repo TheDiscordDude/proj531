@@ -84,7 +84,8 @@ def find_Node(pos, WIDTH):
 def make_grid(rows, width):
     grid = []
     gap = width // rows
-    print(gap)
+    if DEV_MODE:
+        print(gap)
     for i in range(rows):
         grid.append([])
         for j in range(rows):
@@ -110,7 +111,8 @@ def convert_uci_move_to_custom_list(move):
     from_ = uciMove[0:2]
     to_ = uciMove[2:4]
 
-    startPosition = (ord(from_[0])-96, 8 - int(from_[1]) )
-    endPosition = (ord(to_[0])-96, 8 - int(to_[1]) )
-
+    startPosition = (ord(from_[0])-97, 8 - int(from_[1]) )
+    endPosition = (ord(to_[0])-97, 8 - int(to_[1]) )
+    if DEV_MODE:
+        print("custom :", [startPosition,endPosition])
     return [startPosition,endPosition]

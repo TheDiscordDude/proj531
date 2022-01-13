@@ -150,6 +150,7 @@ def move_selection(depth, board):
 
 def alphabeta(alpha, beta, depthleft,board):
     """
+    Avoid going through "useless" moves
     :params alpha: Number that will allow the best move to be calculated
     :params beta: Number that will allow the best move to be calculated
     :params depthleft: Allows to restrict the move search
@@ -175,6 +176,7 @@ def alphabeta(alpha, beta, depthleft,board):
 
 def quiesce(alpha, beta,board):
     """
+    Prevents the algorithm from being affected by the horizon effect
     :params alpha: Number that will allow the best move to be calculated
     :params beta: Number that will allow the best move to be calculated
     :params board: the current chess board
@@ -208,35 +210,61 @@ def random_move_selection(board):
     move = rd.choice(list_leg_move)
     return move
 
+def evaluate_pieces(board):
+    """
+    Allows to evaluate the number of pieces remaining
+    :params board: The current board
 
+    :returns: The sum of all the pieces following the turn
+    """
+    sum = 0
+    #blanc
+    wp = len(board.pieces(chess.PAWN, chess.WHITE))#Pion
+    wn = len(board.pieces(chess.KNIGHT, chess.WHITE))#Roi
+    wb = len(board.pieces(chess.BISHOP, chess.WHITE))#Fou
+    wr = len(board.pieces(chess.ROOK, chess.WHITE))#tour
+    wq = len(board.pieces(chess.QUEEN, chess.WHITE))#Reine
+    #noir
+    bp = len(board.pieces(chess.PAWN, chess.BLACK))#Pion
+    bn = len(board.pieces(chess.KNIGHT, chess.BLACK))#Roi
+    bb = len(board.pieces(chess.BISHOP, chess.BLACK))#Fou
+    br = len(board.pieces(chess.ROOK, chess.BLACK))#Tour
+    bq = len(board.pieces(chess.QUEEN, chess.BLACK))#Reine
+    if(board.turn):#si true donc joueur blanc de jouer
+        sum = wp+wn+wb+wr+wq
+    else:#sinon joueur noir (burk)
+        sum = bp+bn+bb+br+bq
+    return sum
+    
+    
 def fct_ia_expert(board):
     """
     :params board:the current chess board
-    
+
     :returns: the best move
     """
     global move
-    if (evaluate_turn(board) <= 16) and (evaluate_turn(board) > 13):
+    if (evaluate_pieces(board) <= 16) and (evaluate_pieces(board) > 13):
+        move = move_selection(2, board)
+    elif (evaluate_pieces(board) <= 13) and (evaluate_pieces(board) > 10):
         move = move_selection(3, board)
-    elif (evaluate_turn(board) <= 13) and (evaluate_turn(board) > 10):
+    elif (evaluate_pieces(board) <= 10) and (evaluate_pieces(board) > 5):
         move = move_selection(4, board)
-    elif (evaluate_turn(board) <= 10) and (evaluate_turn(board) > 5):
+    elif (evaluate_pieces(board) <= 5) and (evaluate_pieces(board) > 0):
         move = move_selection(5, board)
-    elif (evaluate_turn(board) <= 5) and (evaluate_turn(board) > 0):
-        move = move_selection(6, board)
     return move
 
 def fct_ia_dif_moy(board,lvl):
     """
     :params board: the current chess board
     :params lvl: boolean which separates the medium from the hard difficulty
-
+    
     :returns: the best move
     """
     if(lvl):
         move = move_selection(3, board)
     else:
-        move = move_selection(1, board) 
+        move = move_selection(2, board) 
     return move
 
 def play_ai(board,ia_level):

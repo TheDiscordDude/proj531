@@ -53,7 +53,7 @@ In the Puzzle mode you will need to find the best move to put your oponent in ch
 ![Puzzle Board](puzzle_board.png) 
 
 ## Development : 
-The development began the 16th of January of 2021
+The development began the 16th of December of 2021
 ### Session 1 (16/12/2021)
 
 The team got familiar with python-chess 
