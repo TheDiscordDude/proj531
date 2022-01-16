@@ -1,0 +1,298 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>movementsUI module &#8212; PolyChess  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-movementsUI">
+<span id="movementsui-module"></span><h1>movementsUI module<a class="headerlink" href="#module-movementsUI" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="movementsUI.bishop_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">bishop_moves</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.bishop_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>bishop_moves is the function allowing to move the bishop</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the bishop</li>
+<li><strong>gridBoard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.check_team">
+<code class="descclassname">movementsUI.</code><code class="descname">check_team</code><span class="sig-paren">(</span><em>moveCounter</em>, <em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.check_team" title="Permalink to this definition">¶</a></dt>
+<dd><p>check_team is the function checking if the move is possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the piece</li>
+<li><strong>moveCounter</strong> – number of moves from the begining</li>
+<li><strong>gridBoard</strong> – type list is the board represneted by 2 dimensionnal list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a boolean if it is the turn of the index’s team</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.do_Move">
+<code class="descclassname">movementsUI.</code><code class="descname">do_Move</code><span class="sig-paren">(</span><em>OriginalPos</em>, <em>FinalPosition</em>, <em>starting_order</em>, <em>WIN</em>, <em>board</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.do_Move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.do_move_AI">
+<code class="descclassname">movementsUI.</code><code class="descname">do_move_AI</code><span class="sig-paren">(</span><em>board</em>, <em>ia_level</em>, <em>starting_order</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.do_move_AI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.king_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">king_moves</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.king_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>king_moves is the function allowing to move the king</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the king</li>
+<li><strong>gridboard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.knight_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">knight_moves</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.knight_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>knight_moves is the function allowing to move the knight</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the knight</li>
+<li><strong>gridboard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.on_board">
+<code class="descclassname">movementsUI.</code><code class="descname">on_board</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.on_board" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.pawn_moves_b">
+<code class="descclassname">movementsUI.</code><code class="descname">pawn_moves_b</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.pawn_moves_b" title="Permalink to this definition">¶</a></dt>
+<dd><p>pawn_moves_b is the function allowing to move the pawn in the black team</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the pawn</li>
+<li><strong>gridboard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.pawn_moves_w">
+<code class="descclassname">movementsUI.</code><code class="descname">pawn_moves_w</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.pawn_moves_w" title="Permalink to this definition">¶</a></dt>
+<dd><p>pawn_moves_w is the function allowing to move the pawn in the white team</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the pawn</li>
+<li><strong>gridboard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.queen_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">queen_moves</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.queen_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>queen_moves is the function allowing to move the queen</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the queen</li>
+<li><strong>gridBoard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.rook_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">rook_moves</code><span class="sig-paren">(</span><em>index</em>, <em>gridBoard</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.rook_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>rook_moves is the function allowing to move the rook</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the rook</li>
+<li><strong>gridBoard</strong> – type list is the board</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the new gridboard</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="movementsUI.select_moves">
+<code class="descclassname">movementsUI.</code><code class="descname">select_moves</code><span class="sig-paren">(</span><em>WIN</em>, <em>opponentChoice</em>, <em>starting_order</em>, <em>piece</em>, <em>index</em>, <em>moves</em>, <em>gridBoard</em>, <em>board</em>, <em>grid</em>, <em>WIDTH</em><span class="sig-paren">)</span><a class="headerlink" href="#movementsUI.select_moves" title="Permalink to this definition">¶</a></dt>
+<dd><p>select_moves is the function highlighting the move possible for each piece</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – type list is the position of the piece</li>
+<li><strong>gridBoard</strong> – type list is the board</li>
+<li><strong>piece</strong> – type str is the piece</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the gridboard with highlighted move  for piece choosen</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="main.html">PolyChess</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="main.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, BOUGHANMI Rami DASSEUX Damien HENRIQUES DOS SANTOS Joaquim HIPPOLITE Axel MALACARNE Etienne.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/movementsUI.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

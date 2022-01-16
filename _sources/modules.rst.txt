@@ -1,0 +1,13 @@
+src
+===
+
+.. toctree::
+   :maxdepth: 4
+
+   AI
+   console
+   consts
+   displayUI
+   main
+   movementsUI
+   utilsUI

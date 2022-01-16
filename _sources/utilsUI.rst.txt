@@ -1,0 +1,7 @@
+utilsUI module
+==============
+
+.. automodule:: utilsUI
+    :members:
+    :undoc-members:
+    :show-inheritance:

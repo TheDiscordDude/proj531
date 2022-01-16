@@ -1,0 +1,7 @@
+movementsUI module
+==================
+
+.. automodule:: movementsUI
+    :members:
+    :undoc-members:
+    :show-inheritance:

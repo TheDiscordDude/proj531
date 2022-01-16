@@ -1,0 +1,30 @@
+console package
+===============
+
+Submodules
+----------
+
+console.display module
+----------------------
+
+.. automodule:: console.display
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+console.movements module
+------------------------
+
+.. automodule:: console.movements
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: console
+    :members:
+    :undoc-members:
+    :show-inheritance:
