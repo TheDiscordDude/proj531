@@ -1,16 +1,16 @@
 from consts import *
 
 import pygame
-"""create a pieces class letting us know wich type of piece ,wich color,l'image , if killable is the piece"""
 
 class PieceG:
     def __init__(self, team, type, image="", killable=False):
+        """Creates a piece letting us know wich type of piece ,wich color,l'image , if killable is the piece"""
+
         self.team = team
         self.type = type
         self.killable = killable
         self.image = image
 
-"""create a node class letting us know if eache node on the grid is occupied and the color of each node"""
 
 class Node:
     def __init__(self, row, col, width):
@@ -36,6 +36,7 @@ class Node:
 def convert_to_readable(gridBoard):
     """
     function allowing us to be able to read the grid
+
     :param gridBoard: type list
     :returns: the gridboard but readable 
     """
@@ -67,6 +68,7 @@ def deselect(gridBoard):
 def display_potential_moves(positions, grid):
     """
     function that put the potential move in blue case
+    
     :param positions: type list 
     :param grid: type list
     """

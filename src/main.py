@@ -15,6 +15,7 @@ from AI.ai import play_ai
 def main(board:Board):
     """
     The Main operative function
+
     :param board: the current game board
     """
 
@@ -172,6 +173,7 @@ def graphicalGame(board:Board, sigmaChoice:bool, opponentChoice:int, ia_level=1)
 def consoleGame(board:Board, opponentChoice:int,ia_level:int):
     """
     The main loop for the game in console 
+    
     :param board: the current game board
     :param opponentChoice: choice between PvP (1) or PvE (2)
     :param ia_level: the level of the ia

@@ -11,6 +11,7 @@ def on_board(position):
 def pawn_moves_b(index, gridBoard):
     """
     pawn_moves_b is the function allowing to move the pawn in the black team
+
     :param index: type list is the position of the pawn
     :param gridboard: type list is the board
     :returns: the new gridboard
@@ -38,6 +39,7 @@ def pawn_moves_b(index, gridBoard):
 def check_team(moveCounter, index, gridBoard):
     """
     check_team is the function checking if the move is possible
+
     :param index: type list is the position of the piece
     :param moveCounter: number of moves from the begining
     :param gridBoard: type list is the board represneted by 2 dimensionnal list
@@ -53,6 +55,7 @@ def check_team(moveCounter, index, gridBoard):
 def pawn_moves_w(index, gridBoard):
     """
     pawn_moves_w is the function allowing to move the pawn in the white team
+
     :param index: type list is the position of the pawn
     :param gridboard: type list is the board
     :returns: the new gridboard
@@ -78,6 +81,7 @@ def pawn_moves_w(index, gridBoard):
 def king_moves(index, gridBoard):
     """
     king_moves is the function allowing to move the king
+
     :param index: type list is the position of the king
     :param gridboard: type list is the board
     :returns: the new gridboard
@@ -98,6 +102,7 @@ def king_moves(index, gridBoard):
 def bishop_moves(index, gridBoard):
     """
     bishop_moves is the function allowing to move the bishop
+
     :param index: type list is the position of the bishop
     :param gridBoard: type list is the board
     :returns: the new gridboard
@@ -124,6 +129,7 @@ def bishop_moves(index, gridBoard):
 def knight_moves(index, gridBoard):
     """
     knight_moves is the function allowing to move the knight
+
     :param index: type list is the position of the knight
     :param gridboard: type list is the board
     :returns: the new gridboard
@@ -143,6 +149,7 @@ def knight_moves(index, gridBoard):
 def rook_moves(index, gridBoard):
     """
     rook_moves is the function allowing to move the rook
+
     :param index: type list is the position of the rook
     :param gridBoard: type list is the board
     :returns: the new gridboard
@@ -167,6 +174,7 @@ def rook_moves(index, gridBoard):
 def queen_moves(index, gridBoard):
     """
     queen_moves is the function allowing to move the queen
+
     :param index: type list is the position of the queen
     :param gridBoard: type list is the board
     :returns: the new gridboard
@@ -179,6 +187,7 @@ def queen_moves(index, gridBoard):
 def select_moves(WIN,opponentChoice,starting_order,piece, index, moves, gridBoard,board,grid,WIDTH):
     """
     select_moves is the function highlighting the move possible for each piece
+    
     :param index: type list is the position of the piece
     :param gridBoard: type list is the board
     :param piece: type str is the piece

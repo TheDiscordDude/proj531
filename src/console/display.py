@@ -17,6 +17,7 @@ def clearConsole():
 def display_board(board: Board, chosen_piece:int=None):
     """
     Displays the board
+    
     :param board: the current chess Board used
     :param chosen_piece: all the possible moves for this piece will be displayed
     :returns: nothing

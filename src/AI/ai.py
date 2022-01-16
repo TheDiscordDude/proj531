@@ -121,6 +121,7 @@ def evaluate_turn(board):
 def move_selection(depth, board):
     """
     It will select the best move possible according to the parameters
+
     :params depth: the level of descent in the tree of possible moves
     :params board: the current chess board
     :returns: the best move to play 
@@ -151,11 +152,11 @@ def move_selection(depth, board):
 def alphabeta(alpha, beta, depthleft,board):
     """
     Avoid going through "useless" moves
+
     :params alpha: Number that will allow the best move to be calculated
     :params beta: Number that will allow the best move to be calculated
     :params depthleft: Allows to restrict the move search
     :params board: the current chess board
-
     :returns: the best iteration according to the parameters
     """
     bestscore = -9999
@@ -177,10 +178,10 @@ def alphabeta(alpha, beta, depthleft,board):
 def quiesce(alpha, beta,board):
     """
     Prevents the algorithm from being affected by the horizon effect
+
     :params alpha: Number that will allow the best move to be calculated
     :params beta: Number that will allow the best move to be calculated
     :params board: the current chess board
-
     :returns: the most "useful" iterations
     """
     stand_pat = evaluate_turn(board)
@@ -202,8 +203,9 @@ def quiesce(alpha, beta,board):
 
 def random_move_selection(board):
     """
-    :params board: the current chess board
+    Gets a random move
 
+    :params board: the current chess board
     :returns: a random move
     """
     list_leg_move = list(board.legal_moves)#Turns the object into a list
@@ -213,8 +215,8 @@ def random_move_selection(board):
 def evaluate_pieces(board):
     """
     Allows to evaluate the number of pieces remaining
-    :params board: The current board
 
+    :params board: The current board
     :returns: The sum of all the pieces following the turn
     """
     sum = 0
@@ -239,8 +241,9 @@ def evaluate_pieces(board):
     
 def fct_ia_expert(board):
     """
-    :params board:the current chess board
+    Gets the move of the AI in expert mode
 
+    :params board:the current chess board
     :returns: the best move
     """
     global move
@@ -256,9 +259,10 @@ def fct_ia_expert(board):
 
 def fct_ia_dif_moy(board,lvl):
     """
+    Gets the move of the AI in Normal and Hard mode
+
     :params board: the current chess board
     :params lvl: boolean which separates the medium from the hard difficulty
-    
     :returns: the best move
     """
     if(lvl):
@@ -269,9 +273,10 @@ def fct_ia_dif_moy(board,lvl):
 
 def play_ai(board,ia_level):
     """
+    Gets The move of the AI for a given AI level
+
     :params board: the current chess board
     :params ia_level: which separates the medium from the hard difficulty
-
     :returns: the best move according to the level of difficulty
     """
     if(ia_level == 4):

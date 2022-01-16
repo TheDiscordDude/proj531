@@ -4,6 +4,7 @@ import re
 def getPiece(coords:str) -> int:
     """
     Changes the format of the coord from uci to int
+
     :param coords: the coordinate of the piece (a5 for example)
     :returns: an integer representing the piece
     """
@@ -12,6 +13,7 @@ def getPiece(coords:str) -> int:
 def getLegalPlaces(piece, board): 
     """
     Gets all the places the piece can go to
+
     :param piece: the chosen piece that will move. it's an int
     :param board: the current game board
     :returns: a squareset containing all the possible places the piece could go
@@ -28,6 +30,7 @@ def getLegalPlaces(piece, board):
 def checkPiece(board:Board, coords:str) -> bool:
     """
     Checks if there is a movable piece at the coords
+
     :param board: The current game board
     :param coord: The coords of the piece we want to move
     :returns: a boolean : True if the piece is movable, False if not 
@@ -43,8 +46,8 @@ def checkPiece(board:Board, coords:str) -> bool:
 
 def checkMove(board:Board, from_:str, to_:str) -> bool:
     """
-    Checks if the move is possible.
-    It doesn't check if the piece needs to be changed.
+    Checks if the move is possible. It doesn't check if the piece needs to be changed.
+
     :param board: the current game board
     :param from_: the starting square where the piece is 
     :param to_: the ending square where the piece will be
@@ -59,6 +62,7 @@ def checkMove(board:Board, from_:str, to_:str) -> bool:
 def getStartingPosition(board:Board) -> str:
     """
     Gets the start position of the move and verifies if it's legal
+
     :pamam board: the current game board
     :returns: a string with the coords of the position (a5, d2, etc.)
     """
@@ -70,6 +74,7 @@ def getStartingPosition(board:Board) -> str:
 def getNewPosition(board:Board, startingPosition:str) -> str:
     """
     Gets the end position of the move and verifies if the whole move is possible
+
     :param board: the current game board
     :param startingPosition: the starting position of the move
     :returns: a uci string describing the move ("a2a4", "d5e6", etc.)
@@ -88,12 +93,9 @@ def getNewPosition(board:Board, startingPosition:str) -> str:
 def getBoardInfo(board:Board):
     """
     Displays some board info when in DEVMODE
+
     :param board: the current game board
     """
-    """
-    moves = ""
-    for i in board.legal_moves:
-        moves += " " + str(i)"""
     
     print("check:",board.is_check(), "checkmate:", board.is_checkmate(), "turn", board.turn)
     print( board.fen())
